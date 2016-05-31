@@ -12,7 +12,19 @@
     <form>
       <p>
         <label for="firstName">First Name</label>
-        <input type="text" name="firstName">
+        <input type="text" name="firstName" required>
+      </p>
+      <p>
+        <label for="hairColor">Hair Color</label>
+        <input type="color" name="hairColor" required>
+      </p>
+      <p>
+        <label for="age">Age</label>
+        <input type="number" name="age" placeholder="Your Age" required>
+      </p>
+      <p>
+        <label for="birthplace">Birthplace</label>
+        <input type="text" name="birthplace" placeholder="Where were you born?" required>
       </p>
       <p>
         <button type="submit">Submit</button>
