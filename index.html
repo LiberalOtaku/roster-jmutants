@@ -1,27 +1,36 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Baby's First Javascript</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foundation for Sites</title>
+    <!-- <link rel="stylesheet" href="css/foundation.css">
+    <link rel="stylesheet" href="css/app.css"> -->
   </head>
   <body>
-    <h1>My Cool Page</h1>
-
-    <p id="wicked">
-      This is such wicked content.
-    </p>
-
-    <p class="wow">
-      So learning. Much info. Wow.
-    </p>
-
-    <p class="wow">
-      So learning. Much info. Wowzers.
-    </p>
+    <form>
+      <p>
+        <label for="firstName">First Name</label>
+        <input type="text" name="firstName">
+      </p>
+      <p>
+        <button type="submit">Submit</button>
+      </p>
+    </form>
 
     <script type="text/javascript">
-      var h1 = document.querySelector('h1');
-      console.log(h1.innerText);
+      var myForm = document.querySelector('form');
+      myForm.onsubmit = function(ev) {
+        // debugger;
+        ev.preventDefault();
+        console.log(this.firstName.value);
+      };
     </script>
+
+    <script src="js/vendor/jquery.js"></script>
+    <script src="js/vendor/what-input.js"></script>
+    <script src="js/vendor/foundation.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
