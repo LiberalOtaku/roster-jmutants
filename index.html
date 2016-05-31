@@ -5,38 +5,44 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Foundation for Sites</title>
-    <!-- <link rel="stylesheet" href="css/foundation.css">
-    <link rel="stylesheet" href="css/app.css"> -->
+    <link rel="stylesheet" href="css/foundation.css">
+    <link rel="stylesheet" href="css/app.css">
   </head>
   <body>
-    <form>
-      <p>
-        <label for="firstName">First Name</label>
-        <input type="text" name="firstName" required>
-      </p>
-      <p>
-        <label for="hairColor">Hair Color</label>
-        <input type="color" name="hairColor" required>
-      </p>
-      <p>
-        <label for="age">Age</label>
-        <input type="number" name="age" placeholder="Your Age" required>
-      </p>
-      <p>
-        <label for="birthplace">Birthplace</label>
-        <input type="text" name="birthplace" placeholder="Where were you born?" required>
-      </p>
-      <p>
-        <button type="submit">Submit</button>
-      </p>
-    </form>
+    <div class="">
+      <form>
+        <p>
+          <label for="firstName">First Name</label>
+          <input type="text" name="firstName" required>
+        </p>
+        <p>
+          <label for="hairColor">Hair Color</label>
+          <input type="color" name="hairColor" required>
+        </p>
+        <p>
+          <label for="age">Age</label>
+          <input type="number" name="age" placeholder="Your Age" required>
+        </p>
+        <p>
+          <label for="birthplace">Birthplace</label>
+          <input type="text" name="birthplace" placeholder="Where were you born?" required>
+        </p>
+        <p>
+          <button type="submit">Submit</button>
+        </p>
+      </form>
+
+      <div class="details">
+      </div>
+    </div>
 
     <script type="text/javascript">
       var myForm = document.querySelector('form');
       myForm.onsubmit = function(ev) {
         // debugger;
         ev.preventDefault();
-        console.log(this.firstName.value);
+        var details = document.querySelector('div.details');
+        details.innerHTML += '<p>' + this.firstName.value + '</p>';
       };
     </script>
 
