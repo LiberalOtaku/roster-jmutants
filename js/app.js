@@ -6,19 +6,18 @@ var buildColorDiv = function(color) {
 
 var buildList = function(list) {
   return ' \
-    <dl> \
-      <dt>Name</dt> \
-      <dd>' + list.firstName + '</dd> \
-        \
-      <dt>Hair Color</dt> \
-      <dd>' + list.hairColor + '</dd> \
-        \
-      <dt>Age</dt> \
-      <dd>' + list.age + '</dd> \
-        \
-      <dt>Birthplace</dt> \
-      <dd>' + list.birthplace + '</dd> \
+    <dl>' +
+      buildListItem('Name', list.firstName) +
+      buildListItem('Hair Color', list.hairColor) +
+      buildListItem('Age', list.age) +
+      buildListItem('Birthplace', list.birthplace) + ' \
     </dl>';
+};
+
+var buildListItem = function(term, definition) {
+  return ' \
+    <dt>' + term + '</dt> \
+    <dd>' + definition + '</dd>';
 };
 
 var addDetails = function(ev) {
