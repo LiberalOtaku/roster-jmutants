@@ -1,6 +1,6 @@
 $(document).foundation();
 
-var i = 0;
+var i = 1;
 
 var app = {
 
@@ -9,8 +9,8 @@ var app = {
     var myDelete = document.querySelectorAll('a.delete');
     var myPromote = document.querySelectorAll('a.promote');
     myForm.onsubmit = this.addName;
-    // myDelete.onclick = this.deleteName;
-    // myPromote.onclick = this.promoteName;
+    myDelete.onclick = this.deleteName;
+    myPromote.onclick = this.promoteName;
   },
 
   buildList: function(name) {
@@ -19,6 +19,7 @@ var app = {
     i++;
     dl.style.border = '0px solid blue';
     dl.innerHTML += this.buildListItem(name);
+    dl.addEventListener("click", modifyText, false);
 
     return dl;
   },
@@ -42,21 +43,20 @@ var app = {
     roster.insertBefore(app.buildList(firstName), roster.firstChild);
   },
 
-  // deleteName: function(event) {
-  //   event.preventDefault();
-  //
-  // },
-  //
-  // promoteName: function(event) {
-  //   event.preventDefault();
-  //   var dl = document.getElementById(this.id);
-  //   if (dl.style.border = '0px solid blue') {
-  //     dl.style.border = '1px solid blue';
-  //   }
-  //   else {
-  //     dl.style.border = '0px solid blue';
-  //   }
-  // }
+  deleteName: function(event) {
+    event.preventDefault();
+    var roster = document.querySelector('div.roster');
+    var child = document.getElementById(this.id);
+    roster.removeChild(child);
+  },
+
+  promoteName: function(event) {
+    event.preventDefault();
+    var dl = document.getElementById(this.id);
+    if (dl.style.border = '0px solid blue')
+      dl.style.border = '1px solid blue';
+    else dl.style.border = '0px solid blue';
+  }
 };
 
 app.init();
