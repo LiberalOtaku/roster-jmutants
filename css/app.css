@@ -1,3 +1,7 @@
+h1, p#submit {
+  text-align: center;
+}
+
 section > div {
   width: 80%;
   margin: 20px auto;
