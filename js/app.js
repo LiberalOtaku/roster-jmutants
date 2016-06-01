@@ -16,8 +16,10 @@ var buildList = function(list) {
 
 var buildListItem = function(term, definition) {
   return ' \
-    <dt>' + term + '</dt> \
-    <dd>' + definition + '</dd>';
+    <li> \
+      <dt>' + term + '</dt> \
+      <dd>' + definition + '</dd> \
+    </li>';
 };
 
 var addDetails = function(ev) {
