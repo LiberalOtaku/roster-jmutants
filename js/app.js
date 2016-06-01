@@ -1,25 +1,17 @@
 $(document).foundation();
 
-var i = 1;
-
 var app = {
+  i: 1,
 
   init: function() {
     var myForm = document.querySelector('form');
-    var myDelete = document.querySelectorAll('a.delete');
-    var myPromote = document.querySelectorAll('a.promote');
     myForm.onsubmit = this.addName;
-    myDelete.onclick = this.deleteName;
-    myPromote.onclick = this.promoteName;
   },
 
   buildList: function(name) {
     var dl = document.createElement('dl');
-    dl.id = i;
-    i++;
     dl.style.border = '0px solid blue';
     dl.innerHTML += this.buildListItem(name);
-    dl.addEventListener("click", modifyText, false);
 
     return dl;
   },
@@ -29,8 +21,8 @@ var app = {
       <li> \
         <dt>' + term + '</dt> \
         <dd> \
-          <a href="#" class="delete"><u>delete</u></a> \
-          <a href="#" class="promote"><u>promote</u></a> \
+          <a href="#" class="delete" id="d' + app.i + '"><u>delete</u></a> \
+          <a href="#" class="promote" id="p' + app.i + '"><u>promote</u></a> \
         </dd> \
       </li>';
   },
@@ -41,19 +33,25 @@ var app = {
     var firstName = this.firstName.value;
 
     roster.insertBefore(app.buildList(firstName), roster.firstChild);
+
+    var thisDelete = document.querySelector('#d' + app.i);
+    var thisPromote = document.querySelector('#p' + app.i);
+    thisDelete.addEventListener("click", app.deleteName, false);
+    thisPromote.addEventListener("click", app.promoteName, false);
+    app.i++;
   },
 
   deleteName: function(event) {
     event.preventDefault();
     var roster = document.querySelector('div.roster');
-    var child = document.getElementById(this.id);
+    var child = this.parentNode.parentNode.parentNode;
     roster.removeChild(child);
   },
 
   promoteName: function(event) {
     event.preventDefault();
-    var dl = document.getElementById(this.id);
-    if (dl.style.border = '0px solid blue')
+    var dl = this.parentNode.parentNode.parentNode;
+    if (dl.style.border == '0px solid blue')
       dl.style.border = '1px solid blue';
     else dl.style.border = '0px solid blue';
   }
