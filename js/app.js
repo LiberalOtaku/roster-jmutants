@@ -1,7 +1,10 @@
 $(document).foundation()
 
-var myForm = document.querySelector('form');
-myForm.onsubmit = function(ev) {
+var buildColorDiv = function(color) {
+  return '<div style="height: 20px; width: 100px; background-color: ' + color + '"></div>';
+}
+
+var addDetails = function(ev) {
   ev.preventDefault();
   var details = document.querySelector('div.details');
 
@@ -10,7 +13,7 @@ myForm.onsubmit = function(ev) {
   var age = this.age.value;
   var birthplace = this.birthplace.value;
 
-  var colorDiv = '<div style="height: 20px; width: 100px; background-color: ' + hairColor + '"></div>';
+  var colorDiv = buildColorDiv(hairColor);
 
   details.innerHTML += ' \
     <dl> \
@@ -27,3 +30,6 @@ myForm.onsubmit = function(ev) {
       <dd>' + birthplace + '</dd> \
     </dl>';
 };
+
+var myForm = document.querySelector('form');
+myForm.onsubmit = addDetails;
