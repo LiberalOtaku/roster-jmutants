@@ -5,13 +5,14 @@ var buildColorDiv = function(color) {
 };
 
 var buildList = function(list) {
-  return ' \
-    <dl>' +
-      buildListItem('Name', list.firstName) +
-      buildListItem('Hair Color', list.hairColor) +
-      buildListItem('Age', list.age) +
-      buildListItem('Birthplace', list.birthplace) + ' \
-    </dl>';
+  var dl = document.createElement('dl');
+  dl.style.border = '1px solid red';
+  dl.innerHTML += buildListItem('Name', list.firstName) +
+    buildListItem('Hair Color', list.hairColor) +
+    buildListItem('Age', list.age) +
+    buildListItem('Birthplace', list.birthplace);
+
+  return dl;
 };
 
 var buildListItem = function(term, definition) {
@@ -34,7 +35,7 @@ var addDetails = function(ev) {
     birthplace: this.birthplace.value
   };
 
-  details.innerHTML += buildList(list);
+  details.appendChild(buildList(list));
 };
 
 var myForm = document.querySelector('form');
