@@ -33,6 +33,7 @@
       </form>
 
       <div class="details">
+
       </div>
     </div>
 
@@ -42,7 +43,28 @@
         // debugger;
         ev.preventDefault();
         var details = document.querySelector('div.details');
-        details.innerHTML += '<p>' + this.firstName.value + '</p>';
+        details.innerHTML += ' \
+          <dl> \
+            <li> \
+              <dt>Name</dt> \
+              <dd>' + this.firstName.value + '</dd> \
+            </li> \
+                \
+            <li> \
+              <dt>Hair Color</dt> \
+              <dd>' + this.hairColor.value + '</dd> \
+            </li> \
+                \
+            <li> \
+              <dt>Age</dt> \
+              <dd>' + this.age.value + '</dd> \
+            </li> \
+                \
+            <li> \
+              <dt>Birthplace</dt> \
+              <dd>' + this.birthplace.value + '</dd> \
+            </li> \
+          </dl>';
       };
     </script>
 
