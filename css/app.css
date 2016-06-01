@@ -3,6 +3,14 @@ section > div {
   margin: 20px auto;
 }
 
+a.delete {
+  color: red;
+}
+
+a.promote {
+  color: blue;
+}
+
 form {
   margin-top: 50px;
 }
