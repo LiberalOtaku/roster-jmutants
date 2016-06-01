@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/app.css">
   </head>
   <body>
-    <div class="">
+    <div>
       <form>
         <p>
           <label for="firstName">First Name</label>
@@ -28,7 +28,7 @@
           <input type="text" name="birthplace" placeholder="Where were you born?" required>
         </p>
         <p>
-          <button type="submit">Submit</button>
+          <button class="button" type="submit">Submit</button>
         </p>
       </form>
 
@@ -36,37 +36,6 @@
 
       </div>
     </div>
-
-    <script type="text/javascript">
-      var myForm = document.querySelector('form');
-      myForm.onsubmit = function(ev) {
-        // debugger;
-        ev.preventDefault();
-        var details = document.querySelector('div.details');
-        details.innerHTML += ' \
-          <dl> \
-            <li> \
-              <dt>Name</dt> \
-              <dd>' + this.firstName.value + '</dd> \
-            </li> \
-                \
-            <li> \
-              <dt>Hair Color</dt> \
-              <dd>' + this.hairColor.value + '</dd> \
-            </li> \
-                \
-            <li> \
-              <dt>Age</dt> \
-              <dd>' + this.age.value + '</dd> \
-            </li> \
-                \
-            <li> \
-              <dt>Birthplace</dt> \
-              <dd>' + this.birthplace.value + '</dd> \
-            </li> \
-          </dl>';
-      };
-    </script>
 
     <script src="js/vendor/jquery.js"></script>
     <script src="js/vendor/what-input.js"></script>
