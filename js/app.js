@@ -14,26 +14,43 @@ var app = {
   buildList: function(name) {
     var dl = document.createElement('dl');
     dl.style.border = '0px solid blue';
-    dl.appendChild(this.buildListItem(name));
 
-    return dl;
-  },
-
-  buildListItem: function(term) {
     var li = document.createElement('li');
     var dt = document.createElement('dt');
+    dt.innerText += name;
+    li.appendChild(dt);
+
     var dd = document.createElement('dd');
     var ul = document.createElement('ul');
     ul.className = "button-group";
 
-    dt.innerText += term;
-    li.appendChild(dt);
+    var input = document.createElement('input');
+    input.type = "text";
+    input.className = "edit";
+    input.placeholder = "Enter Student Name";
+    input.value = dt.innerText;
 
     var editLink = this.buildLink({
       text: 'edit',
       class: "button small radius secondary",
       handler: function() {
-        // edits go here
+        dt.innerText = '';
+        dt.appendChild(input);
+
+        ul.replaceChild(submitLink, editLink);
+      }
+    });
+
+    var submitLink = this.buildLink({
+      text: 'submit',
+      class: "button small radius success",
+      handler: function() {
+        if (input.value != '') {
+          dt.innerHTML = '';
+          dt.innerText = input.value;
+
+          ul.replaceChild(editLink, submitLink);
+        }
       }
     });
 
@@ -41,7 +58,7 @@ var app = {
       text: 'remove',
       class: "button small radius alert",
       handler: function() {
-        li.parentNode.remove();
+        dl.remove();
       }
     });
 
@@ -49,8 +66,6 @@ var app = {
       text: 'promote',
       class: "button small radius",
       handler: function() {
-        var dl = li.parentNode;
-
         // just switching the item border for now
         if (dl.style.border == '0px solid blue')
           dl.style.border = '1px solid blue';
@@ -63,7 +78,8 @@ var app = {
     ul.appendChild(promoteLink);
     dd.appendChild(ul);
     li.appendChild(dd);
-    return li;
+    dl.appendChild(li);
+    return dl;
   },
 
   buildLink: function(options) {
@@ -91,29 +107,6 @@ var app = {
 
   prependChild: function(parent, child) {
     parent.insertBefore(child, parent.firstChild);
-  },
-
-  deleteName: function(event) {
-    event.preventDefault();
-    var list = document.querySelector('#studentList');
-
-    // this === clicked <a>delete</a>, child === surrounding <dl></dl>
-    var child = this.parentNode.parentNode.parentNode;
-
-    // remove the selected dl from the roster
-    list.removeChild(child);
-  },
-
-  promoteName: function(event) {
-    event.preventDefault();
-
-    // this === clicked <a>promote</a>, dl === surrounding <dl></dl>
-    var dl = this.parentNode.parentNode.parentNode;
-
-    // just switching the item border for now
-    if (dl.style.border == '0px solid blue')
-      dl.style.border = '1px solid blue';
-    else dl.style.border = '0px solid blue';
   },
 };
 
