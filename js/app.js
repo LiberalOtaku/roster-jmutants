@@ -1,13 +1,15 @@
 $(document).foundation();
 
 var app = {
+  // counter for tracking list items
   i: 1,
 
+  // initialize app
   init: function() {
-    var myForm = document.querySelector('form');
-    myForm.onsubmit = this.addName;
+    document.querySelector('form').onsubmit = this.addName;
   },
 
+  // now build the actual list for each new name
   buildList: function(name) {
     var dl = document.createElement('dl');
     dl.style.border = '0px solid blue';
@@ -30,10 +32,11 @@ var app = {
   addName: function(event) {
     event.preventDefault();
     var roster = document.querySelector('div.roster');
-    var firstName = this.firstName.value;
+    var studentName = this.studentName.value;
 
-    roster.insertBefore(app.buildList(firstName), roster.firstChild);
+    roster.insertBefore(app.buildList(studentName), roster.firstChild);
 
+    // add delete and promote capabilities
     var thisDelete = document.querySelector('#d' + app.i);
     var thisPromote = document.querySelector('#p' + app.i);
     thisDelete.addEventListener("click", app.deleteName, false);
@@ -44,13 +47,21 @@ var app = {
   deleteName: function(event) {
     event.preventDefault();
     var roster = document.querySelector('div.roster');
+
+    // this === clicked <a>delete</a>, child === surrounding <dl></dl>
     var child = this.parentNode.parentNode.parentNode;
+
+    // remove the selected dl from the roster
     roster.removeChild(child);
   },
 
   promoteName: function(event) {
     event.preventDefault();
+
+    // this === clicked <a>promote</a>, dl === surrounding <dl></dl>
     var dl = this.parentNode.parentNode.parentNode;
+
+    // just switching the item border for now
     if (dl.style.border == '0px solid blue')
       dl.style.border = '1px solid blue';
     else dl.style.border = '0px solid blue';

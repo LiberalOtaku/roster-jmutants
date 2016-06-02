@@ -1,11 +1,11 @@
-h1, p#submit {
+h2, p#submit {
   text-align: center;
 }
 
-section > div {
+/*section > div {
   width: 80%;
   margin: 20px auto;
-}
+}*/
 
 a.delete {
   color: red;
