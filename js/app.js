@@ -33,7 +33,7 @@ var app = {
 
     var editLink = this.buildLink({
       text: 'edit',
-      class: "button small radius secondary",
+      class: "edit button small radius secondary",
       handler: function() {
         dt.innerText = '';
         dt.appendChild(input);
@@ -44,7 +44,7 @@ var app = {
 
     var submitLink = this.buildLink({
       text: 'submit',
-      class: "button small radius success",
+      class: "submit button small radius success",
       handler: function() {
         if (input.value != '') {
           dt.innerHTML = '';
@@ -57,15 +57,16 @@ var app = {
 
     var deleteLink = this.buildLink({
       text: 'remove',
-      class: "button small radius alert",
+      class: "remove button small radius alert",
       handler: function() {
         dl.remove();
+        app.refreshRoster();
       }
     });
 
     var promoteLink = this.buildLink({
       text: 'promote',
-      class: "button small radius",
+      class: "promote button small radius",
       handler: function() {
         // just switching the item border for now
         if (dl.style.border == '0px solid blue')
@@ -76,37 +77,31 @@ var app = {
 
     var topLink = this.buildLink({
       text: 'top',
-      class: "button small radius",
+      class: "top button small radius",
       handler: function() {
         // move item to the top
 
-        if (dl.previousSibling == null) {
-          topObject.class = "button small radius disabled";
-        }
+        app.refreshRoster();
       }
     });
 
     var upLink = this.buildLink({
       text: 'up',
-      class: "button small radius",
+      class: "up button small radius",
       handler: function() {
         // move item up one space
 
-        if (dl.previousSibling == null) {
-          upObject.class = "button small radius disabled";
-        }
+        app.refreshRoster();
       }
     });
 
     var downLink = this.buildLink({
       text: 'down',
-      class: "button small radius",
+      class: "down button small radius",
       handler: function() {
         // move item down one space
 
-        if (dl.nextSibling == null) {
-          downLink.className = "button small radius disabled";
-        }
+        app.refreshRoster();
       }
     });
 
@@ -125,11 +120,31 @@ var app = {
   buildLink: function(options) {
     var link = document.createElement('a');
     link.href = "#";
+    link.innerText = options.text;
     link.className = options.class;
     link.onclick = options.handler;
-    link.innerText = options.text;
 
     return link;
+  },
+
+  refreshRoster: function() {
+    var allTop = document.querySelectorAll('a.top');
+    var allUp = document.querySelectorAll('a.up');
+    var allDown = document.querySelectorAll('a.down');
+
+    var disableTop = document.querySelector('dl:first-child > li > dd > ul > a.top');
+    var disableUp = document.querySelector('dl:first-child > li > dd > ul > a.up');
+    var disableDown = document.querySelector('dl:last-child > li > dd > ul > a.down');
+
+    for (var i = 0; i < allTop.length; i++) {
+      allTop[i].className = "top button small radius";
+      allUp[i].className = "up button small radius";
+      allDown[i].className = "down button small radius";
+    }
+
+    disableTop.className = "top button small radius disabled";
+    disableUp.className = "up button small radius disabled";
+    disableDown.className = "down button small radius disabled";
   },
 
   // called on form submit
@@ -138,9 +153,9 @@ var app = {
     var list = document.querySelector('#studentList');
     var form = document.querySelector('#studentForm');
     var studentName = form.studentName.value;
-    this.count++;
 
     this.prependChild(list, this.buildList(studentName));
+    this.refreshRoster();
     form.reset();
     form.studentName.focus();
   },
