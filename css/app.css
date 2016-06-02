@@ -1,4 +1,4 @@
-h2, p#submit {
+h2 {
   text-align: center;
 }
 
@@ -7,24 +7,8 @@ h2, p#submit {
   margin: 20px auto;
 }*/
 
-a.delete {
-  color: red;
-}
-
-a.promote {
-  color: blue;
-}
-
-/*#studentForm {
-  margin-top: 50px;
-}*/
-
 #studentForm div {
   padding: 0;
-}
-
-dl {
-  padding: 15px 10px;
 }
 
 dl > li {
@@ -33,8 +17,13 @@ dl > li {
 
 dt, dd {
   display: inline-block;
-  vertical-align: top;
-  width: 48%;
+  vertical-align: middle;
+  width: 50%;
+}
+
+.button-group {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 dd {

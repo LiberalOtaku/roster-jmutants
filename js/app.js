@@ -4,9 +4,6 @@ var app = {
   // initialize app
   init: function() {
     this.setupEventListeners();
-
-    // counter for tracking list items
-    this.count = 0;
   },
 
   setupEventListeners: function() {
@@ -17,22 +14,69 @@ var app = {
   buildList: function(name) {
     var dl = document.createElement('dl');
     dl.style.border = '0px solid blue';
-    dl.innerHTML += this.buildListItem(name);
+    dl.appendChild(this.buildListItem(name));
 
     return dl;
   },
 
   buildListItem: function(term) {
-    return ' \
-      <li> \
-        <dt>' + term + '</dt> \
-        <dd> \
-          <a href="#" class="delete" id="d' + this.count + '"><u>delete</u></a> \
-          <a href="#" class="promote" id="p' + this.count + '"><u>promote</u></a> \
-        </dd> \
-      </li>';
+    var li = document.createElement('li');
+    var dt = document.createElement('dt');
+    var dd = document.createElement('dd');
+    var ul = document.createElement('ul');
+    ul.className = "button-group";
+
+    dt.innerText += term;
+    li.appendChild(dt);
+
+    var editLink = this.buildLink({
+      text: 'edit',
+      class: "button small radius secondary",
+      handler: function() {
+        // edits go here
+      }
+    });
+
+    var deleteLink = this.buildLink({
+      text: 'remove',
+      class: "button small radius alert",
+      handler: function() {
+        li.parentNode.remove();
+      }
+    });
+
+    var promoteLink = this.buildLink({
+      text: 'promote',
+      class: "button small radius",
+      handler: function() {
+        var dl = li.parentNode;
+
+        // just switching the item border for now
+        if (dl.style.border == '0px solid blue')
+          dl.style.border = '1px solid blue';
+        else dl.style.border = '0px solid blue';
+      }
+    });
+
+    ul.appendChild(editLink);
+    ul.appendChild(deleteLink);
+    ul.appendChild(promoteLink);
+    dd.appendChild(ul);
+    li.appendChild(dd);
+    return li;
   },
 
+  buildLink: function(options) {
+    var link = document.createElement('a');
+    link.href = "#";
+    link.className = options.class;
+    link.onclick = options.handler;
+    link.innerText = options.text;
+
+    return link;
+  },
+
+  // called on form submit
   addStudent: function(event) {
     event.preventDefault();
     var list = document.querySelector('#studentList');
@@ -40,15 +84,13 @@ var app = {
     var studentName = form.studentName.value;
     this.count++;
 
-    list.insertBefore(app.buildList(studentName), list.firstChild);
+    this.prependChild(list, this.buildList(studentName));
     form.reset();
     form.studentName.focus();
+  },
 
-    // add delete and promote capabilities
-    var thisDelete = document.querySelector('#d' + this.count);
-    var thisPromote = document.querySelector('#p' + this.count);
-    thisDelete.addEventListener("click", app.deleteName, false);
-    thisPromote.addEventListener("click", app.promoteName, false);
+  prependChild: function(parent, child) {
+    parent.insertBefore(child, parent.firstChild);
   },
 
   deleteName: function(event) {
