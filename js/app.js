@@ -24,6 +24,7 @@ var app = {
     var ul = document.createElement('ul');
     ul.className = "button-group";
 
+    // create edit field
     var input = document.createElement('input');
     input.type = "text";
     input.className = "edit";
@@ -73,9 +74,48 @@ var app = {
       }
     });
 
+    var topLink = this.buildLink({
+      text: 'top',
+      class: "button small radius",
+      handler: function() {
+        // move item to the top
+
+        if (dl.previousSibling == null) {
+          topObject.class = "button small radius disabled";
+        }
+      }
+    });
+
+    var upLink = this.buildLink({
+      text: 'up',
+      class: "button small radius",
+      handler: function() {
+        // move item up one space
+
+        if (dl.previousSibling == null) {
+          upObject.class = "button small radius disabled";
+        }
+      }
+    });
+
+    var downLink = this.buildLink({
+      text: 'down',
+      class: "button small radius",
+      handler: function() {
+        // move item down one space
+
+        if (dl.nextSibling == null) {
+          downLink.className = "button small radius disabled";
+        }
+      }
+    });
+
     ul.appendChild(editLink);
     ul.appendChild(deleteLink);
     ul.appendChild(promoteLink);
+    ul.appendChild(topLink);
+    ul.appendChild(upLink);
+    ul.appendChild(downLink);
     dd.appendChild(ul);
     li.appendChild(dd);
     dl.appendChild(li);
