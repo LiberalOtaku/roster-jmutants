@@ -15,8 +15,12 @@ a.promote {
   color: blue;
 }
 
-form {
+/*#studentForm {
   margin-top: 50px;
+}*/
+
+#studentForm div {
+  padding: 0;
 }
 
 dl {

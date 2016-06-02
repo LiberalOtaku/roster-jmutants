@@ -1,12 +1,16 @@
 $(document).foundation();
 
 var app = {
-  // counter for tracking list items
-  i: 1,
-
   // initialize app
   init: function() {
-    document.querySelector('form').onsubmit = this.addName;
+    this.setupEventListeners();
+
+    // counter for tracking list items
+    this.count = 0;
+  },
+
+  setupEventListeners: function() {
+    document.querySelector('form').onsubmit = this.addStudent.bind(this);
   },
 
   // now build the actual list for each new name
@@ -23,36 +27,37 @@ var app = {
       <li> \
         <dt>' + term + '</dt> \
         <dd> \
-          <a href="#" class="delete" id="d' + app.i + '"><u>delete</u></a> \
-          <a href="#" class="promote" id="p' + app.i + '"><u>promote</u></a> \
+          <a href="#" class="delete" id="d' + this.count + '"><u>delete</u></a> \
+          <a href="#" class="promote" id="p' + this.count + '"><u>promote</u></a> \
         </dd> \
       </li>';
   },
 
-  addName: function(event) {
+  addStudent: function(event) {
     event.preventDefault();
-    var roster = document.querySelector('div.roster');
-    var studentName = this.studentName.value;
+    var list = document.querySelector('#studentList');
+    var form = document.querySelector('#studentForm');
+    var studentName = form.studentName.value;
+    this.count++;
 
-    roster.insertBefore(app.buildList(studentName), roster.firstChild);
+    list.insertBefore(app.buildList(studentName), list.firstChild);
 
     // add delete and promote capabilities
-    var thisDelete = document.querySelector('#d' + app.i);
-    var thisPromote = document.querySelector('#p' + app.i);
+    var thisDelete = document.querySelector('#d' + this.count);
+    var thisPromote = document.querySelector('#p' + this.count);
     thisDelete.addEventListener("click", app.deleteName, false);
     thisPromote.addEventListener("click", app.promoteName, false);
-    app.i++;
   },
 
   deleteName: function(event) {
     event.preventDefault();
-    var roster = document.querySelector('div.roster');
+    var list = document.querySelector('#studentList');
 
     // this === clicked <a>delete</a>, child === surrounding <dl></dl>
     var child = this.parentNode.parentNode.parentNode;
 
     // remove the selected dl from the roster
-    roster.removeChild(child);
+    list.removeChild(child);
   },
 
   promoteName: function(event) {
@@ -65,7 +70,7 @@ var app = {
     if (dl.style.border == '0px solid blue')
       dl.style.border = '1px solid blue';
     else dl.style.border = '0px solid blue';
-  }
+  },
 };
 
 app.init();
