@@ -41,6 +41,8 @@ var app = {
     this.count++;
 
     list.insertBefore(app.buildList(studentName), list.firstChild);
+    form.reset();
+    form.studentName.focus();
 
     // add delete and promote capabilities
     var thisDelete = document.querySelector('#d' + this.count);
