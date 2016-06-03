@@ -27,6 +27,11 @@ dl:last-child a.down {
   pointer-events: none;
 }
 
+ul a {
+  display: inline-block;
+  width: 4em;
+}
+
 .button-group, .edit {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
