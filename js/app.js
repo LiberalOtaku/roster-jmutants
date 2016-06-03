@@ -80,6 +80,14 @@ var app = {
       class: "top button small radius",
       handler: function() {
         // move item to the top
+        var list = document.querySelector('#studentList');
+        var currentName = dl;
+        var nextName = dl.previousElementSibling;
+
+        while (nextName != null) {
+          list.insertBefore(currentName, nextName);
+          nextName = currentName.previousElementSibling;
+        }
 
         app.refreshRoster();
       }
@@ -90,8 +98,11 @@ var app = {
       class: "up button small radius",
       handler: function() {
         // move item up one space
-
-        app.refreshRoster();
+        if (dl.previousElementSibling != null) {
+          var list = document.querySelector('#studentList');
+          list.insertBefore(dl, dl.previousElementSibling);
+          app.refreshRoster();
+        }
       }
     });
 
@@ -100,8 +111,11 @@ var app = {
       class: "down button small radius",
       handler: function() {
         // move item down one space
-
-        app.refreshRoster();
+        if (dl.nextElementSibling != null) {
+          var list = document.querySelector('#studentList');
+          list.insertBefore(dl, dl.nextElementSibling.nextElementSibling);
+          app.refreshRoster();
+        }
       }
     });
 
@@ -136,7 +150,7 @@ var app = {
     var disableUp = document.querySelector('dl:first-child > li > dd > ul > a.up');
     var disableDown = document.querySelector('dl:last-child > li > dd > ul > a.down');
 
-    for (var i = 0; i < allTop.length; i++) {
+    for (var i = 0; i < allTop.length; ++i) {
       allTop[i].className = "top button small radius";
       allUp[i].className = "up button small radius";
       allDown[i].className = "down button small radius";
