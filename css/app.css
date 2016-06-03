@@ -21,6 +21,12 @@ dt, dd {
   width: 50%;
 }
 
+dl:first-child a.top,
+dl:first-child a.up,
+dl:last-child a.down {
+  pointer-events: none;
+}
+
 .button-group, .edit {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;

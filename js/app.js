@@ -2,7 +2,8 @@ $(document).foundation();
 
 var app = {
   // initialize app
-  init: function() {
+  init: function(listSelector) {
+    this.list = document.querySelector(listSelector);
     this.setupEventListeners();
   },
 
@@ -10,10 +11,10 @@ var app = {
     document.querySelector('form').onsubmit = this.addStudent.bind(this);
   },
 
-  // now build the actual list for each new name
+  // now build the actual list entry for each new name
   buildList: function(name) {
     var dl = document.createElement('dl');
-    dl.style.border = '0px solid blue';
+    dl.style.border = '0px dashed blue';
 
     var li = document.createElement('li');
     var dt = document.createElement('dt');
@@ -31,6 +32,7 @@ var app = {
     input.placeholder = "Enter Student Name";
     input.value = dt.innerText;
 
+    // create edit button
     var editLink = this.buildLink({
       text: 'edit',
       class: "edit button small radius secondary",
@@ -38,23 +40,25 @@ var app = {
         dt.innerText = '';
         dt.appendChild(input);
 
-        ul.replaceChild(submitLink, editLink);
+        ul.replaceChild(updateLink, editLink);
       }
     });
 
-    var submitLink = this.buildLink({
-      text: 'submit',
-      class: "submit button small radius success",
+    // create update button
+    var updateLink = this.buildLink({
+      text: 'update',
+      class: "update button small radius success",
       handler: function() {
-        if (input.value != '') {
+        if (input.value !== '') {
           dt.innerHTML = '';
           dt.innerText = input.value;
 
-          ul.replaceChild(editLink, submitLink);
+          ul.replaceChild(editLink, updateLink);
         }
       }
     });
 
+    // create delete button
     var deleteLink = this.buildLink({
       text: 'remove',
       class: "remove button small radius alert",
@@ -64,61 +68,58 @@ var app = {
       }
     });
 
+    // create promote button
     var promoteLink = this.buildLink({
       text: 'promote',
       class: "promote button small radius",
       handler: function() {
         // just switching the item border for now
-        if (dl.style.border == '0px solid blue')
-          dl.style.border = '1px solid blue';
-        else dl.style.border = '0px solid blue';
+        if (dl.style.border === '0px dashed blue')
+          dl.style.border = '1px dashed blue';
+        else dl.style.border = '0px dashed blue';
       }
     });
 
+    // create top button
     var topLink = this.buildLink({
       text: 'top',
       class: "top button small radius",
       handler: function() {
         // move item to the top
-        var list = document.querySelector('#studentList');
-        var currentName = dl;
-        var nextName = dl.previousElementSibling;
-
-        while (nextName != null) {
-          list.insertBefore(currentName, nextName);
-          nextName = currentName.previousElementSibling;
-        }
-
+        app.list.insertBefore(dl, dl.parentNode.firstElementChild);
         app.refreshRoster();
       }
     });
 
+    // create up button
     var upLink = this.buildLink({
       text: 'up',
       class: "up button small radius",
       handler: function() {
         // move item up one space
-        if (dl.previousElementSibling != null) {
-          var list = document.querySelector('#studentList');
-          list.insertBefore(dl, dl.previousElementSibling);
+        var prevDL = dl.previousElementSibling;
+        if (prevDL !== null) {
+          app.list.insertBefore(dl, prevDL);
           app.refreshRoster();
         }
       }
     });
 
+    // create down button
     var downLink = this.buildLink({
       text: 'down',
       class: "down button small radius",
       handler: function() {
         // move item down one space
-        if (dl.nextElementSibling != null) {
-          var list = document.querySelector('#studentList');
-          list.insertBefore(dl, dl.nextElementSibling.nextElementSibling);
+        var nextDL = dl.nextElementSibling;
+        if (nextDL !== null) {
+          app.list.insertBefore(dl, nextDL.nextElementSibling);
           app.refreshRoster();
         }
       }
     });
 
+    // put it all together
     ul.appendChild(editLink);
     ul.appendChild(deleteLink);
     ul.appendChild(promoteLink);
@@ -146,9 +147,9 @@ var app = {
     var allUp = document.querySelectorAll('a.up');
     var allDown = document.querySelectorAll('a.down');
 
-    var disableTop = document.querySelector('dl:first-child > li > dd > ul > a.top');
-    var disableUp = document.querySelector('dl:first-child > li > dd > ul > a.up');
-    var disableDown = document.querySelector('dl:last-child > li > dd > ul > a.down');
+    var disableTop = document.querySelector('dl:first-child a.top');
+    var disableUp = document.querySelector('dl:first-child a.up');
+    var disableDown = document.querySelector('dl:last-child a.down');
 
     for (var i = 0; i < allTop.length; ++i) {
       allTop[i].className = "top button small radius";
@@ -156,27 +157,26 @@ var app = {
       allDown[i].className = "down button small radius";
     }
 
-    disableTop.className = "top button small radius disabled";
-    disableUp.className = "up button small radius disabled";
-    disableDown.className = "down button small radius disabled";
+    disableTop.className += " disabled";
+    disableUp.className += " disabled";
+    disableDown.className += " disabled";
   },
 
   // called on form submit
   addStudent: function(event) {
     event.preventDefault();
-    var list = document.querySelector('#studentList');
     var form = document.querySelector('#studentForm');
     var studentName = form.studentName.value;
 
-    this.prependChild(list, this.buildList(studentName));
+    this.prependChild(this.list, this.buildList(studentName));
     this.refreshRoster();
     form.reset();
     form.studentName.focus();
   },
 
   prependChild: function(parent, child) {
-    parent.insertBefore(child, parent.firstChild);
+    parent.insertBefore(child, parent.firstElementChild);
   },
 };
 
-app.init();
+app.init('#studentList');
