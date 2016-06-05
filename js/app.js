@@ -2,8 +2,9 @@ $(document).foundation();
 
 var app = {
   // initialize app
-  init: function(listSelector) {
+  init: function(formSelector, listSelector) {
     this.list = $(listSelector);
+    this.form = $(formSelector);
     this.getLocalStorage();
     this.setupEventListeners();
     this.refreshRoster();
@@ -20,7 +21,7 @@ var app = {
   },
 
   setupEventListeners: function() {
-    $('#studentForm').submit(this.addStudent.bind(this));
+    this.form.submit(this.addStudent.bind(this));
   },
 
   // now build the actual list entry for each new name
@@ -35,8 +36,6 @@ var app = {
 
     var li = $('<li/>');
     var dt = $('<dt/>').text(name);
-    li.append(dt);
-
     var dd = $('<dd/>');
     var ul = $('<ul/>').attr({"class": "button-group"});
 
@@ -110,8 +109,8 @@ var app = {
         var prevDL = dl.prev();
         if (prevDL.length) {
           dl.insertBefore(prevDL);
-          app.saveList();
           app.refreshRoster();
+          app.saveList();
         }
       }
     });
@@ -133,17 +132,15 @@ var app = {
 
     // put it all together
     ul.append(editLink, deleteLink, favoriteLink, topLink, upLink, downLink);
-    dd.append(ul);
-    li.append(dd);
-    dl.append(li);
-    return dl;
+    return dl.append(li.append(dt, dd.append(ul)));
   },
 
   buildLink: function(options) {
     return $('<a/>').attr({
       href: "#",
       "class": options.class,
-    }).html(options.contents).click(options.handler);
+    }).html(options.contents)
+      .click(options.handler);
   },
 
   refreshRoster: function() {
@@ -167,19 +164,17 @@ var app = {
   // called on form submit
   addStudent: function(event) {
     event.preventDefault();
-    var form = document.querySelector('#studentForm');
-    var studentName = $('#studentForm input:text').val();
+    var studentName = this.form.find('#studentName');
 
-    this.list.prepend(this.buildList(studentName, false));
+    this.list.prepend(this.buildList(studentName.val(), false));
     this.refreshRoster();
     app.saveList();
-    form.reset();
-    form.studentName.focus();
+    studentName.val('').focus();
   },
 
   saveList: function() {
     // simplest solution for me to save the list
-    // may be changed to reduce time complexity later
+    // may be changed in the future to reduce time complexity
     var newList = [];
     var favoriteList = [];
     var dlList = app.list.children();
@@ -196,4 +191,4 @@ var app = {
   },
 };
 
-app.init('#studentList');
+app.init('#studentForm', '#studentList');
