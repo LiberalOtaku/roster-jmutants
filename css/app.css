@@ -41,8 +41,20 @@ dd {
   text-align: right;
 }
 
+dl:nth-of-type(odd) {
+  background-color: White;
+}
+
 dl:nth-of-type(even) {
   background-color: WhiteSmoke;
+}
+
+dl.favorite:nth-of-type(odd) {
+  background-color: Gold;
+}
+
+dl.favorite:nth-of-type(even) {
+  background-color: GoldenRod;
 }
 
 @media (min-width: 700px) {

@@ -11,9 +11,10 @@ var app = {
 
   getLocalStorage: function() {
     var roster = JSON.parse(localStorage.getItem('roster'));
+    var favorite = JSON.parse(localStorage.getItem('favorite'));
     if (roster !== null) {
       for (var i = 0; i < roster.length; ++i) {
-        this.list.appendChild(this.buildList(roster[i]));
+        var newChild = this.list.appendChild(this.buildList(roster[i], favorite[i]));
       }
     }
   },
@@ -23,9 +24,10 @@ var app = {
   },
 
   // now build the actual list entry for each new name
-  buildList: function(name) {
+  buildList: function(name, favorite) {
     var dl = document.createElement('dl');
-    dl.style.border = '0px dashed blue';
+    if (favorite)
+      dl.className = "favorite";
 
     var li = document.createElement('li');
     var dt = document.createElement('dt');
@@ -86,10 +88,11 @@ var app = {
       contents: '<i class="fa fa-star fa-lg"></i>',
       class: "favorite button tiny radius",
       handler: function() {
-        // just switching the item border for now
-        if (dl.style.border === '0px dashed blue')
-          dl.style.border = '1px dashed blue';
-        else dl.style.border = '0px dashed blue';
+        // just switching the item background color for now
+        if (dl.className === '')
+          dl.className = "favorite";
+        else dl.className = '';
+        app.saveList();
       }
     });
 
@@ -114,8 +117,8 @@ var app = {
         var prevDL = dl.previousElementSibling;
         if (prevDL !== null) {
           app.list.insertBefore(dl, prevDL);
-          app.refreshRoster();
           app.saveList();
+          app.refreshRoster();
         }
       }
     });
@@ -186,7 +189,7 @@ var app = {
     var form = document.querySelector('#studentForm');
     var studentName = form.studentName.value;
 
-    this.prependChild(this.list, this.buildList(studentName));
+    this.prependChild(this.list, this.buildList(studentName, false));
     this.refreshRoster();
     app.saveList();
     form.reset();
@@ -201,11 +204,18 @@ var app = {
     // simplest solution for me to save the list
     // may be changed to reduce time complexity later
     var newList = [];
-    var dls = app.list.children;
-    for (var i = 0; i < dls.length; ++i) {
-      newList.push(dls[i].firstElementChild.innerText);
+    var favoriteList = [];
+    var dlList = app.list.children;
+
+    for (var i = 0; i < dlList.length; ++i) {
+      newList.push(dlList[i].firstElementChild.innerText);
+      if (dlList[i].className === "favorite")
+        favoriteList.push(true);
+      else favoriteList.push(false);
     }
+
     localStorage.setItem('roster', JSON.stringify(newList));
+    localStorage.setItem('favorite', JSON.stringify(favoriteList));
   },
 };
 
