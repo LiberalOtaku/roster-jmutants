@@ -40,34 +40,26 @@ var app = {
     var dd = $('<dd/>');
     var ul = $('<ul/>').attr({"class": "button-group"});
 
-    // create edit field
-    var input = $('<input/>').attr({
-      type: "text",
-      "class": "edit medium-6 columns",
-      placeholder: "Enter Student Name",
-    }).val(dt.text());
-
     // create edit button
     var editLink = this.buildLink({
       contents: '<i class="fa fa-pencil fa-lg"></i>',
       class: "edit button tiny radius secondary",
       handler: function() {
-        dt.replaceWith(input);
-        editLink.replaceWith(updateLink);
-      }
-    });
-
-    // create update button
-    var updateLink = this.buildLink({
-      contents: '<i class="fa fa-check fa-lg"></i>',
-      class: "update button tiny radius success",
-      handler: function() {
-        var value = input.val();
-        if (value !== '') {
-          dt.text(value);
-          input.replaceWith(dt);
-          updateLink.replaceWith(editLink);
+        // create edit field
+        if ((editLink.attr("class") === "update button tiny radius success") &&
+        ($('#input').val() !== '')) {
+          dt.text($('#input').val());
+          editLink.attr("class", "edit button tiny radius secondary");
           app.saveList();
+        }
+        else {
+          dt.html($('<input/>').attr({
+            id: "input",
+            type: "text",
+            "class": "edit medium-6 columns",
+            placeholder: "Enter Student Name",
+          }).val(dt.text()));
+          editLink.attr("class", "update button tiny radius success");
         }
       }
     });
