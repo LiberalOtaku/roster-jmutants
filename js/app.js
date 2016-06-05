@@ -3,7 +3,7 @@ $(document).foundation();
 var app = {
   // initialize app
   init: function(listSelector) {
-    this.list = document.querySelector(listSelector);
+    this.list = $(listSelector);
     this.getLocalStorage();
     this.setupEventListeners();
     this.refreshRoster();
@@ -12,48 +12,48 @@ var app = {
   getLocalStorage: function() {
     var roster = JSON.parse(localStorage.getItem('roster'));
     var favorite = JSON.parse(localStorage.getItem('favorite'));
-    if (roster !== null) {
+    if (roster !== null && roster.length) {
       for (var i = 0; i < roster.length; ++i) {
-        var newChild = this.list.appendChild(this.buildList(roster[i], favorite[i]));
+        var newChild = this.list.append(this.buildList(roster[i], favorite[i]));
       }
     }
   },
 
   setupEventListeners: function() {
-    document.querySelector('form').onsubmit = this.addStudent.bind(this);
+    $('#studentForm').submit(this.addStudent.bind(this));
   },
 
   // now build the actual list entry for each new name
   buildList: function(name, favorite) {
-    var dl = document.createElement('dl');
-    if (favorite)
-      dl.className = "favorite";
+    var dl = $('<dl/>').attr({
+      "class": function() {
+          if (favorite)
+            return "favorite";
+          else return "";
+      }
+    });
 
-    var li = document.createElement('li');
-    var dt = document.createElement('dt');
-    dt.innerText = name;
-    li.appendChild(dt);
+    var li = $('<li/>');
+    var dt = $('<dt/>').text(name);
+    li.append(dt);
 
-    var dd = document.createElement('dd');
-    var ul = document.createElement('ul');
-    ul.className = "button-group";
+    var dd = $('<dd/>');
+    var ul = $('<ul/>').attr({"class": "button-group"});
 
     // create edit field
-    var input = document.createElement('input');
-    input.type = "text";
-    input.className = "edit";
-    input.placeholder = "Enter Student Name";
-    input.value = dt.innerText;
+    var input = $('<input/>').attr({
+      type: "text",
+      "class": "edit medium-6 columns",
+      placeholder: "Enter Student Name",
+    }).val(dt.text());
 
     // create edit button
     var editLink = this.buildLink({
       contents: '<i class="fa fa-pencil fa-lg"></i>',
       class: "edit button tiny radius secondary",
       handler: function() {
-        dt.innerText = '';
-        dt.appendChild(input);
-
-        ul.replaceChild(updateLink, editLink);
+        dt.replaceWith(input);
+        editLink.replaceWith(updateLink);
       }
     });
 
@@ -62,11 +62,11 @@ var app = {
       contents: '<i class="fa fa-check fa-lg"></i>',
       class: "update button tiny radius success",
       handler: function() {
-        if (input.value !== '') {
-          dt.innerHTML = '';
-          dt.innerText = input.value;
-
-          ul.replaceChild(editLink, updateLink);
+        var value = input.val();
+        if (value !== '') {
+          dt.text(value);
+          input.replaceWith(dt);
+          updateLink.replaceWith(editLink);
           app.saveList();
         }
       }
@@ -89,9 +89,10 @@ var app = {
       class: "favorite button tiny radius",
       handler: function() {
         // just switching the item background color for now
-        if (dl.className === '')
-          dl.className = "favorite";
-        else dl.className = '';
+        var className = dl.attr("class");
+        if (dl.attr("class") === "")
+          dl.attr({"class": "favorite"});
+        else dl.attr("class", "");
         app.saveList();
       }
     });
@@ -102,7 +103,7 @@ var app = {
       class: "top button tiny radius",
       handler: function() {
         // move item to the top
-        app.list.insertBefore(dl, dl.parentNode.firstElementChild);
+        dl.insertBefore(dl.siblings().first());
         app.refreshRoster();
         app.saveList();
       }
@@ -114,9 +115,9 @@ var app = {
       class: "up button tiny radius",
       handler: function() {
         // move item up one space
-        var prevDL = dl.previousElementSibling;
-        if (prevDL !== null) {
-          app.list.insertBefore(dl, prevDL);
+        var prevDL = dl.prev();
+        if (prevDL.length) {
+          dl.insertBefore(prevDL);
           app.saveList();
           app.refreshRoster();
         }
@@ -129,9 +130,9 @@ var app = {
       class: "down button tiny radius",
       handler: function() {
         // move item down one space
-        var nextDL = dl.nextElementSibling;
-        if (nextDL !== null) {
-          app.list.insertBefore(dl, nextDL.nextElementSibling);
+        var nextDL = dl.next();
+        if (nextDL.length) {
+          dl.insertAfter(nextDL);
           app.refreshRoster();
           app.saveList();
         }
@@ -139,47 +140,35 @@ var app = {
     });
 
     // put it all together
-    ul.appendChild(editLink);
-    ul.appendChild(deleteLink);
-    ul.appendChild(favoriteLink);
-    ul.appendChild(topLink);
-    ul.appendChild(upLink);
-    ul.appendChild(downLink);
-    dd.appendChild(ul);
-    li.appendChild(dd);
-    dl.appendChild(li);
+    ul.append(editLink, deleteLink, favoriteLink, topLink, upLink, downLink);
+    dd.append(ul);
+    li.append(dd);
+    dl.append(li);
     return dl;
   },
 
   buildLink: function(options) {
-    var link = document.createElement('a');
-    link.href = "#";
-    link.innerHTML = options.contents;
-    link.className = options.class;
-    link.onclick = options.handler;
-
-    return link;
+    return $('<a/>').attr({
+      href: "#",
+      "class": options.class,
+    }).html(options.contents).click(options.handler);
   },
 
   refreshRoster: function() {
-    if (app.list.firstElementChild !== null) {
-      var allTop = document.querySelectorAll('a.top');
-      var allUp = document.querySelectorAll('a.up');
-      var allDown = document.querySelectorAll('a.down');
-
-      var disableTop = document.querySelector('dl:first-child a.top');
-      var disableUp = document.querySelector('dl:first-child a.up');
-      var disableDown = document.querySelector('dl:last-child a.down');
+    if (app.list.children().length) {
+      var allTop = $('a.top');
+      var allUp = $('a.up');
+      var allDown = $('a.down');
 
       for (var i = 0; i < allTop.length; ++i) {
-        allTop[i].className = "top button tiny radius";
-        allUp[i].className = "up button tiny radius";
-        allDown[i].className = "down button tiny radius";
+        allTop.eq(i).attr({"class": "top button tiny radius"});
+        allUp.eq(i).attr({"class": "up button tiny radius"});
+        allDown.eq(i).attr({"class": "down button tiny radius"});
       }
 
-      disableTop.className += " disabled";
-      disableUp.className += " disabled";
-      disableDown.className += " disabled";
+      $('dl:first-child a.top').attr({"class": "top button tiny radius disabled"});
+      $('dl:first-child a.up').attr({"class": "up button tiny radius disabled"});
+      $('dl:last-child a.down').attr({"class": "down button tiny radius disabled"});
     }
   },
 
@@ -187,17 +176,13 @@ var app = {
   addStudent: function(event) {
     event.preventDefault();
     var form = document.querySelector('#studentForm');
-    var studentName = form.studentName.value;
+    var studentName = $('#studentForm input:text').val();
 
-    this.prependChild(this.list, this.buildList(studentName, false));
+    this.list.prepend(this.buildList(studentName, false));
     this.refreshRoster();
     app.saveList();
     form.reset();
     form.studentName.focus();
-  },
-
-  prependChild: function(parent, child) {
-    parent.insertBefore(child, parent.firstElementChild);
   },
 
   saveList: function() {
@@ -205,11 +190,11 @@ var app = {
     // may be changed to reduce time complexity later
     var newList = [];
     var favoriteList = [];
-    var dlList = app.list.children;
+    var dlList = app.list.children();
 
     for (var i = 0; i < dlList.length; ++i) {
-      newList.push(dlList[i].firstElementChild.innerText);
-      if (dlList[i].className === "favorite")
+      newList.push(dlList.eq(i).children().first().text());
+      if (dlList.eq(i).attr("class") === "favorite")
         favoriteList.push(true);
       else favoriteList.push(false);
     }
