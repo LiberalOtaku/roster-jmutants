@@ -37,6 +37,15 @@ ul a {
   margin-bottom: 0.5rem;
 }
 
+.actions {
+  opacity: 0;
+  transition: 0.3s;
+}
+
+dl:hover .actions {
+  opacity: 1;
+}
+
 dd {
   text-align: right;
 }

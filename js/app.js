@@ -37,7 +37,7 @@ var app = {
     var li = $('<li/>');
     var dt = $('<dt/>').text(name);
     var dd = $('<dd/>');
-    var ul = $('<ul/>').attr({"class": "button-group"});
+    var ul = $('<ul/>').attr({"class": "button-group actions"});
 
     // create edit button
     var editLink = this.buildLink({
