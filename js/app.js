@@ -13,7 +13,7 @@ var app = {
   getLocalStorage: function() {
     var roster = JSON.parse(localStorage.getItem('roster'));
     var favorite = JSON.parse(localStorage.getItem('favorite'));
-    if (roster !== null && roster.length) {
+    if (roster && favorite) {
       for (var i = 0; i < roster.length; ++i) {
         var newChild = this.list.append(this.buildList(roster[i], favorite[i]));
       }
@@ -38,6 +38,8 @@ var app = {
     var dt = $('<dt/>').text(name);
     var dd = $('<dd/>');
     var ul = $('<ul/>').attr({"class": "button-group actions"});
+    var editGroup = $('<li/>');
+    var moveGroup = $('<li/>');
 
     // create edit button
     var editLink = this.buildLink({
@@ -58,6 +60,7 @@ var app = {
             "class": "edit medium-6 columns",
             placeholder: "Enter Student Name",
           }).val(dt.text()));
+          dt.children().first().focus().select();
           editLink.attr("class", "update button tiny radius success");
         }
       }
@@ -131,7 +134,9 @@ var app = {
     });
 
     // put it all together
-    ul.append(editLink, deleteLink, favoriteLink, topLink, upLink, downLink);
+    editGroup.append(editLink, deleteLink, favoriteLink);
+    moveGroup.append(topLink, upLink, downLink);
+    ul.append(editGroup, moveGroup);
     return dl.append(li.append(dt, dd.append(ul)));
   },
 
