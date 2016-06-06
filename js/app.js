@@ -83,10 +83,9 @@ var app = {
       class: "favorite button tiny radius",
       handler: function() {
         // just switching the item background color for now
-        var className = dl.attr("class");
-        if (dl.attr("class") === "")
-          dl.attr({"class": "favorite"});
-        else dl.attr("class", "");
+        if (dl.attr("class") === "favorite")
+          dl.removeClass("favorite");
+        else dl.addClass("favorite");
         app.saveList();
       }
     });
@@ -149,21 +148,10 @@ var app = {
   },
 
   refreshRoster: function() {
-    if (app.list.children().length) {
-      var allTop = $('a.top');
-      var allUp = $('a.up');
-      var allDown = $('a.down');
-
-      for (var i = 0; i < allTop.length; ++i) {
-        allTop.eq(i).attr({"class": "top button tiny radius"});
-        allUp.eq(i).attr({"class": "up button tiny radius"});
-        allDown.eq(i).attr({"class": "down button tiny radius"});
-      }
-
-      $('dl:first-child a.top').attr({"class": "top button tiny radius disabled"});
-      $('dl:first-child a.up').attr({"class": "up button tiny radius disabled"});
-      $('dl:last-child a.down').attr({"class": "down button tiny radius disabled"});
-    }
+    $('a.top, a.up, a.down').removeClass("disabled");
+    $('dl:first-child a.top, \
+       dl:first-child a.up, \
+       dl:last-child a.down').addClass("disabled");
   },
 
   // called on form submit

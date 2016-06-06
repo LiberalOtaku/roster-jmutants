@@ -1,6 +1,6 @@
-/*body {
-  background-image: linear-gradient(to left top, blue, red);
-}*/
+body {
+  background-image: linear-gradient(to left top, violet, orange);
+}
 
 h2 {
   text-align: center;
@@ -13,6 +13,11 @@ h2 {
 
 #studentForm div {
   padding: 0;
+}
+
+dl {
+  border: 1px solid gray;
+  margin-bottom: 0;
 }
 
 dl > li {
@@ -31,6 +36,7 @@ dt {
 
 dd {
   padding-right: 1em;
+  text-align: right;
 }
 
 dl:first-child a.top,
@@ -56,10 +62,6 @@ ul a {
 
 dl:hover .actions {
   opacity: 1;
-}
-
-dd {
-  text-align: right;
 }
 
 dl:nth-of-type(odd) {
