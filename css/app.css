@@ -2,6 +2,11 @@ body {
   background-image: linear-gradient(to left top, violet, orange);
 }
 
+.columns {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 h2 {
   text-align: center;
 }
@@ -20,7 +25,7 @@ dl {
   margin-bottom: 0;
 }
 
-dl > li {
+li {
   list-style: none;
 }
 
@@ -51,8 +56,9 @@ ul a {
 }
 
 .button-group, .edit {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  margin-left: 0;
 }
 
 .actions {

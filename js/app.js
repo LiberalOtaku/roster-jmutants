@@ -3,8 +3,8 @@ $(document).foundation();
 var app = {
   // initialize app
   init: function(formSelector, listSelector) {
-    this.list = $(listSelector);
     this.form = $(formSelector);
+    this.list = $(listSelector);
     this.getLocalStorage();
     this.setupEventListeners();
     this.refreshRoster();
@@ -12,26 +12,27 @@ var app = {
 
   getLocalStorage: function() {
     var roster = JSON.parse(localStorage.getItem('roster'));
-    var favorite = JSON.parse(localStorage.getItem('favorite'));
-    if (roster && favorite) {
-      for (var i = 0; i < roster.length; ++i) {
-        var newChild = this.list.append(this.buildList(roster[i], favorite[i]));
-      }
+    if (roster) {
+      $.each(roster, function(i, student) {
+        app.list.append(app.buildList(student.name, student.favorite));
+      });
     }
   },
 
   setupEventListeners: function() {
     this.form.submit(this.addStudent.bind(this));
+    $('#load').click(this.loadRoster.bind(this));
+    $('#clear').click(this.clearRoster.bind(this));
   },
 
   // now build the actual list entry for each new name
   buildList: function(name, favorite) {
     var dl = $('<dl/>').attr({
-      "class": function() {
+      "class": (function() {
           if (favorite)
             return "favorite";
           else return "";
-      }
+      })(),
     });
 
     var li = $('<li/>');
@@ -157,10 +158,10 @@ var app = {
   // called on form submit
   addStudent: function(event) {
     event.preventDefault();
-    var studentName = this.form.find('#studentName');
+    var studentName = app.form.find('[name="studentName"]');
 
-    this.list.prepend(this.buildList(studentName.val(), false));
-    this.refreshRoster();
+    app.list.prepend(app.buildList(studentName.val(), false));
+    app.refreshRoster();
     app.saveList();
     studentName.val('').focus();
   },
@@ -168,19 +169,36 @@ var app = {
   saveList: function() {
     // simplest solution for me to save the list
     // may be changed in the future to reduce time complexity
-    var newList = [];
-    var favoriteList = [];
-    var dlList = app.list.children();
+    var studentList = [];
+    $.each(app.list.children(), function(i, dl) {
+      studentList.push({
+        name: $(dl).children().children().first().text(),
+        favorite: (function() {
+          if ($(dl).attr("class") === "favorite")
+            return true;
+          else return false;
+        })(),
+      });
+    });
 
-    for (var i = 0; i < dlList.length; ++i) {
-      newList.push(dlList.eq(i).children().first().text());
-      if (dlList.eq(i).attr("class") === "favorite")
-        favoriteList.push(true);
-      else favoriteList.push(false);
-    }
+    localStorage.setItem('roster', JSON.stringify(studentList));
+  },
 
-    localStorage.setItem('roster', JSON.stringify(newList));
-    localStorage.setItem('favorite', JSON.stringify(favoriteList));
+  loadRoster: function(event) {
+    $.ajax({
+      method: 'get',
+      url: 'https://mutant-school.herokuapp.com/api/v1/mutants',
+      success: function(roster) {
+        $.each(roster, function(i, student) {
+          app.list.append(app.buildList(student.real_name, false));
+        });
+      },
+    });
+  },
+
+  clearRoster: function(event) {
+    this.list.html('');
+    app.saveList();
   },
 };
 

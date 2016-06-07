@@ -13,17 +13,21 @@
     <div class="row">
       <div class="medium-offset-2 medium-8 columns">
         <h2>MegaRoster</h2>
+        <ul class="button-group">
+          <li class="medium-6 columns">
+            <button type="button" id="load" class="secondary button expanded">Load from Server</button>
+          </li>
+          <li class="medium-6 columns">
+            <button type="button" id="clear" class="alert button expanded">Clear</button>
+          </li>
+        </ul>
         <form id="studentForm">
           <div class="medium-9 columns">
-            <input type="text"
-                   id="studentName"
-                   name="studentName"
-                   placeholder="Enter Student Name"
-                   required>
-            </div>
-            <div class="medium-3 columns">
-              <button type="submit" class="button expanded">Add Student</button>
-            </div>
+            <input type="text" name="studentName" placeholder="Enter Student Name" required>
+          </div>
+          <div class="medium-3 columns">
+            <button type="submit" class="button expanded">Add Student</button>
+          </div>
         </form>
       </div>
     </div>
