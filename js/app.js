@@ -21,8 +21,8 @@ var app = {
 
   setupEventListeners: function() {
     this.form.submit(this.addStudent.bind(this));
-    $('#load').click(this.loadRoster.bind(this));
-    $('#clear').click(this.clearRoster.bind(this));
+    this.form.find('#load').click(this.loadRoster.bind(this));
+    this.form.find('#clear').click(this.clearRoster.bind(this));
   },
 
   // now build the actual list entry for each new name
@@ -158,11 +158,11 @@ var app = {
   // called on form submit
   addStudent: function(event) {
     event.preventDefault();
-    var studentName = app.form.find('[name="studentName"]');
+    var studentName = this.form.find('[name="studentName"]');
 
-    app.list.prepend(app.buildList(studentName.val(), false));
-    app.refreshRoster();
-    app.saveList();
+    this.list.prepend(this.buildList(studentName.val(), false));
+    this.refreshRoster();
+    this.saveList();
     studentName.val('').focus();
   },
 
@@ -170,7 +170,7 @@ var app = {
     // simplest solution for me to save the list
     // may be changed in the future to reduce time complexity
     var studentList = [];
-    $.each(app.list.children(), function(i, dl) {
+    $.each(this.list.children(), function(i, dl) {
       studentList.push({
         name: $(dl).children().children().first().text(),
         favorite: (function() {
@@ -198,7 +198,7 @@ var app = {
 
   clearRoster: function(event) {
     this.list.html('');
-    app.saveList();
+    this.saveList();
   },
 };
 
