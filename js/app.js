@@ -42,17 +42,28 @@ var app = {
         && $('[name="editRealName"]').val().length
         && $('[name="editMutantName"]').val().length
         && $('[name="editPower"]').val().length) {
-          dt.html(' \
-            <ul> \
-              <li>' + $('[name="editRealName"]').val() + '</li> \
-              <li>' + $('[name="editMutantName"]').val() + '</li> \
-              <li>' + $('[name="editPower"]').val() + '</li> \
-            </ul>');
-          editLink.attr("class", "edit button tiny radius secondary");
-          editLink.children().first().attr("class", "fa fa-pencil fa-lg");
-
-          // PATCH to API
-
+          $.ajax({
+            url: app.url + dl.attr('data-id'),
+            method: 'patch',
+            contentType: "application/json",
+            data: JSON.stringify({
+              "mutant": {
+                "real_name": $('[name="editRealName"]').val(),
+                "mutant_name": $('[name="editMutantName"]').val(),
+                "power": $('[name="editPower"]').val(),
+              }
+            }),
+            success: function(data) {
+              dt.html(' \
+                <ul> \
+                  <li>' + $('[name="editRealName"]').val() + '</li> \
+                  <li>' + $('[name="editMutantName"]').val() + '</li> \
+                  <li>' + $('[name="editPower"]').val() + '</li> \
+                </ul>');
+              editLink.attr("class", "edit button tiny radius secondary");
+              editLink.children().first().attr("class", "fa fa-pencil fa-lg");
+            },
+          });
         }
         else {
           var editRealName = $('<input/>').attr({
@@ -102,6 +113,7 @@ var app = {
             app.refreshRoster();
           },
         });
+        app.refreshRoster();
         app.form.slideDown();
       }
     });
@@ -171,24 +183,20 @@ var app = {
 
   refreshRoster: function() {
     $('a.top, a.up, a.down').removeClass("disabled");
-    $('dl:first-child a.top, \
-       dl:first-child a.up, \
-       dl:last-child a.down').addClass("disabled");
+    $('dl:first-child a.top, dl:first-child a.up, dl:last-child a.down').addClass("disabled");
   },
 
   // called on form submit
   addStudent: function(event) {
     event.preventDefault();
     this.form.slideUp();
+
     var realName = this.form.find('[name="realName"]');
     var mutantName = this.form.find('[name="mutantName"]');
     var power = this.form.find('[name="power"]');
     var dl = this.buildList(realName.val(), mutantName.val(), power.val());
 
     this.list.append(dl);
-    this.refreshRoster();
-
-    // POST to API
     $.ajax({
       url: this.url,
       method: 'post',
@@ -208,6 +216,7 @@ var app = {
       },
     });
 
+    this.refreshRoster();
     this.form.slideDown();
   },
 
@@ -222,14 +231,22 @@ var app = {
         });
       },
     });
+    app.refreshRoster();
     app.form.slideDown();
   },
 
   clearRoster: function(event) {
-    this.list.html('');
-
     // DELETE all from API
-
+    $.each(app.list.children(), function(i, dl) {
+      $.ajax({
+        url: app.url + dl.attr('data-id'),
+        method: 'delete',
+        success: function() {
+          dl.remove();
+          app.refreshRoster();
+        },
+      });
+    });
   },
 };
 
