@@ -2,9 +2,10 @@ $(document).foundation();
 
 var app = {
   // initialize app
-  init: function(formSelector, listSelector) {
+  init: function(formSelector, listSelector, url) {
     this.form = $(formSelector);
     this.list = $(listSelector);
+    this.url = url;
     this.setupEventListeners();
     this.refreshRoster();
   },
@@ -16,8 +17,8 @@ var app = {
   },
 
   // now build the actual list entry for each new name
-  buildList: function(real_name, mutant_name, power) {
-    var dl = $('<dl/>');
+  buildList: function(real_name, mutant_name, power, id) {
+    var dl = $('<dl/>').attr('data-id', id);
     var li = $('<li/>');
     var dt = $('<dt/>').html(' \
       <ul> \
@@ -92,11 +93,16 @@ var app = {
       contents: '<i class="fa fa-times fa-lg"></i>',
       class: "remove button tiny radius alert",
       handler: function() {
-        dl.remove();
-        app.refreshRoster();
-
-        // DELETE from API
-
+        app.form.slideUp();
+        $.ajax({
+          url: app.url + dl.attr('data-id'),
+          method: 'delete',
+          success: function() {
+            dl.remove();
+            app.refreshRoster();
+          },
+        });
+        app.form.slideDown();
       }
     });
 
@@ -173,30 +179,50 @@ var app = {
   // called on form submit
   addStudent: function(event) {
     event.preventDefault();
+    this.form.slideUp();
     var realName = this.form.find('[name="realName"]');
     var mutantName = this.form.find('[name="mutantName"]');
     var power = this.form.find('[name="power"]');
+    var dl = this.buildList(realName.val(), mutantName.val(), power.val());
 
-    this.list.append(this.buildList(realName.val(), mutantName.val(), power.val()));
+    this.list.append(dl);
     this.refreshRoster();
 
     // POST to API
+    $.ajax({
+      url: this.url,
+      method: 'post',
+      contentType: "application/json",
+      data: JSON.stringify({
+        "mutant": {
+          "real_name": realName.val(),
+          "mutant_name": mutantName.val(),
+          "power": power.val(),
+        }
+      }),
+      success: function(data) {
+        dl.attr('data-id', data.id);
+        realName.val('').focus();
+        mutantName.val('');
+        power.val('');
+      },
+    });
 
-    realName.val('').focus();
-    mutantName.val('');
-    power.val('');
+    this.form.slideDown();
   },
 
   loadRoster: function(event) {
+    app.form.slideUp();
     $.ajax({
+      url: app.url,
       method: 'get',
-      url: 'https://mutant-school.herokuapp.com/api/v1/mutants',
       success: function(roster) {
         $.each(roster, function(i, mutant) {
-          app.list.append(app.buildList(mutant.real_name, mutant.mutant_name, mutant.power));
+          app.list.append(app.buildList(mutant.real_name, mutant.mutant_name, mutant.power, mutant.id));
         });
       },
     });
+    app.form.slideDown();
   },
 
   clearRoster: function(event) {
@@ -207,4 +233,4 @@ var app = {
   },
 };
 
-app.init('#mutantForm', '#mutantList');
+app.init('#mutantForm', '#mutantList', 'https://mutant-school.herokuapp.com/api/v1/mutants/');
