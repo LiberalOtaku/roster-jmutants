@@ -12,8 +12,8 @@
   <body>
     <div class="row">
       <div class="medium-offset-2 medium-8 columns">
-        <h2>MegaRoster</h2>
-        <form id="studentForm">
+        <h2>Mutant School</h2>
+        <form id="mutantForm">
           <ul class="button-group">
             <li class="medium-6 columns">
               <button type="button" id="load" class="secondary button expanded">Load from Server</button>
@@ -22,18 +22,16 @@
               <button type="button" id="clear" class="alert button expanded">Clear</button>
             </li>
           </ul>
-          <div class="medium-9 columns">
-            <input type="text" name="studentName" placeholder="Enter Student Name" required>
-          </div>
-          <div class="medium-3 columns">
-            <button type="submit" class="button expanded">Add Student</button>
-          </div>
+          <input type="text" name="realName" placeholder="Enter Your Name" required>
+          <input type="text" name="mutantName" placeholder="Enter Mutant Name" required>
+          <input type="text" name="power" placeholder="Enter Superpower" required>
+          <button type="submit" class="button expanded">Add Student</button>
         </form>
       </div>
     </div>
 
     <div class="row">
-      <div id="studentList" class="medium-offset-2 medium-8 columns">
+      <div id="mutantList" class="medium-offset-2 medium-8 columns">
 
       </div>
     </div>

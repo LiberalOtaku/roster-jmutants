@@ -55,7 +55,11 @@ ul a {
   width: 4em;
 }
 
-.button-group, .edit {
+a.top {
+  width: 8em;
+}
+
+.button-group, .edit.columns {
   margin-top: 1rem;
   margin-bottom: 1rem;
   margin-left: 0;
@@ -63,7 +67,7 @@ ul a {
 
 .actions {
   opacity: 0;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 
 dl:hover .actions {

@@ -5,18 +5,8 @@ var app = {
   init: function(formSelector, listSelector) {
     this.form = $(formSelector);
     this.list = $(listSelector);
-    this.getLocalStorage();
     this.setupEventListeners();
     this.refreshRoster();
-  },
-
-  getLocalStorage: function() {
-    var roster = JSON.parse(localStorage.getItem('roster'));
-    if (roster) {
-      $.each(roster, function(i, student) {
-        app.list.append(app.buildList(student.name, student.favorite));
-      });
-    }
   },
 
   setupEventListeners: function() {
@@ -26,20 +16,19 @@ var app = {
   },
 
   // now build the actual list entry for each new name
-  buildList: function(name, favorite) {
-    var dl = $('<dl/>').attr({
-      "class": (function() {
-          if (favorite)
-            return "favorite";
-          else return "";
-      })(),
-    });
-
+  buildList: function(real_name, mutant_name, power) {
+    var dl = $('<dl/>');
     var li = $('<li/>');
-    var dt = $('<dt/>').text(name);
+    var dt = $('<dt/>').html(' \
+      <ul> \
+        <li>' + real_name + '</li> \
+        <li>' + mutant_name + '</li> \
+        <li>' + power + '</li> \
+      </ul>');
     var dd = $('<dd/>');
-    var ul = $('<ul/>').attr({"class": "button-group actions"});
+    var buttonGroup = $('<ul/>').attr({"class": "button-group actions"});
     var editGroup = $('<li/>');
+    var topGroup = $('<li/>');
     var moveGroup = $('<li/>');
 
     // create edit button
@@ -48,21 +37,52 @@ var app = {
       class: "edit button tiny radius secondary",
       handler: function() {
         // create edit field
-        if ((editLink.attr("class") === "update button tiny radius success") &&
-        ($('#input').val() !== '')) {
-          dt.text($('#input').val());
+        if ((editLink.attr("class") === "update button tiny radius success")
+        && $('[name="editRealName"]').val().length
+        && $('[name="editMutantName"]').val().length
+        && $('[name="editPower"]').val().length) {
+          dt.html(' \
+            <ul> \
+              <li>' + $('[name="editRealName"]').val() + '</li> \
+              <li>' + $('[name="editMutantName"]').val() + '</li> \
+              <li>' + $('[name="editPower"]').val() + '</li> \
+            </ul>');
           editLink.attr("class", "edit button tiny radius secondary");
-          app.saveList();
+          editLink.children().first().attr("class", "fa fa-pencil fa-lg");
+
+          // PATCH to API
+
         }
         else {
-          dt.html($('<input/>').attr({
-            id: "input",
+          var editRealName = $('<input/>').attr({
+            name: "editRealName",
             type: "text",
             "class": "edit medium-6 columns",
-            placeholder: "Enter Student Name",
-          }).val(dt.text()));
+            placeholder: "Enter Your Name",
+            required: true,
+          }).val(dt.children().children().eq(0).text());
+
+          var editMutantName = $('<input/>').attr({
+            name: "editMutantName",
+            type: "text",
+            "class": "edit medium-6 columns",
+            placeholder: "Enter Mutant Name",
+            required: true,
+          }).val(dt.children().children().eq(1).text());
+
+          var editPower = $('<input/>').attr({
+            name: "editPower",
+            type: "text",
+            "class": "edit medium-6 columns",
+            placeholder: "Enter Superpower",
+            required: true,
+          }).val(dt.children().children().eq(2).text());
+
+          dt.html('');
+          dt.append(editRealName, editMutantName, editPower);
           dt.children().first().focus().select();
           editLink.attr("class", "update button tiny radius success");
+          editLink.children().first().attr("class", "fa fa-check fa-lg");
         }
       }
     });
@@ -74,20 +94,9 @@ var app = {
       handler: function() {
         dl.remove();
         app.refreshRoster();
-        app.saveList();
-      }
-    });
 
-    // create favorite button
-    var favoriteLink = this.buildLink({
-      contents: '<i class="fa fa-star fa-lg"></i>',
-      class: "favorite button tiny radius",
-      handler: function() {
-        // just switching the item background color for now
-        if (dl.attr("class") === "favorite")
-          dl.removeClass("favorite");
-        else dl.addClass("favorite");
-        app.saveList();
+        // DELETE from API
+
       }
     });
 
@@ -99,7 +108,9 @@ var app = {
         // move item to the top
         dl.insertBefore(dl.siblings().first());
         app.refreshRoster();
-        app.saveList();
+
+        // reorder students to API
+
       }
     });
 
@@ -113,7 +124,9 @@ var app = {
         if (prevDL.length) {
           dl.insertBefore(prevDL);
           app.refreshRoster();
-          app.saveList();
+
+          // reorder students to API
+
         }
       }
     });
@@ -128,16 +141,18 @@ var app = {
         if (nextDL.length) {
           dl.insertAfter(nextDL);
           app.refreshRoster();
-          app.saveList();
+
+          // reorder students to API
+
         }
       }
     });
 
     // put it all together
-    editGroup.append(editLink, deleteLink, favoriteLink);
-    moveGroup.append(topLink, upLink, downLink);
-    ul.append(editGroup, moveGroup);
-    return dl.append(li.append(dt, dd.append(ul)));
+    editGroup.append(editLink, deleteLink);
+    moveGroup.append(upLink, downLink);
+    buttonGroup.append(editGroup, topGroup.append(topLink), moveGroup);
+    return dl.append(li.append(dt, dd.append(buttonGroup)));
   },
 
   buildLink: function(options) {
@@ -158,30 +173,18 @@ var app = {
   // called on form submit
   addStudent: function(event) {
     event.preventDefault();
-    var studentName = this.form.find('[name="studentName"]');
+    var realName = this.form.find('[name="realName"]');
+    var mutantName = this.form.find('[name="mutantName"]');
+    var power = this.form.find('[name="power"]');
 
-    this.list.prepend(this.buildList(studentName.val(), false));
+    this.list.append(this.buildList(realName.val(), mutantName.val(), power.val()));
     this.refreshRoster();
-    this.saveList();
-    studentName.val('').focus();
-  },
 
-  saveList: function() {
-    // simplest solution for me to save the list
-    // may be changed in the future to reduce time complexity
-    var studentList = [];
-    $.each(this.list.children(), function(i, dl) {
-      studentList.push({
-        name: $(dl).children().children().first().text(),
-        favorite: (function() {
-          if ($(dl).attr("class") === "favorite")
-            return true;
-          else return false;
-        })(),
-      });
-    });
+    // POST to API
 
-    localStorage.setItem('roster', JSON.stringify(studentList));
+    realName.val('').focus();
+    mutantName.val('');
+    power.val('');
   },
 
   loadRoster: function(event) {
@@ -189,8 +192,8 @@ var app = {
       method: 'get',
       url: 'https://mutant-school.herokuapp.com/api/v1/mutants',
       success: function(roster) {
-        $.each(roster, function(i, student) {
-          app.list.append(app.buildList(student.real_name, false));
+        $.each(roster, function(i, mutant) {
+          app.list.append(app.buildList(mutant.real_name, mutant.mutant_name, mutant.power));
         });
       },
     });
@@ -198,8 +201,10 @@ var app = {
 
   clearRoster: function(event) {
     this.list.html('');
-    this.saveList();
+
+    // DELETE all from API
+
   },
 };
 
-app.init('#studentForm', '#studentList');
+app.init('#mutantForm', '#mutantList');
