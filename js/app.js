@@ -104,7 +104,7 @@ var app = {
       contents: '<i class="fa fa-times fa-lg"></i>',
       class: "remove button tiny radius alert",
       handler: function() {
-        app.form.slideUp();
+        app.list.slideUp();
         $.ajax({
           url: app.url + dl.attr('data-id'),
           method: 'delete',
@@ -113,8 +113,7 @@ var app = {
             app.refreshRoster();
           },
         });
-        app.refreshRoster();
-        app.form.slideDown();
+        app.list.slideDown();
       }
     });
 
@@ -189,7 +188,7 @@ var app = {
   // called on form submit
   addStudent: function(event) {
     event.preventDefault();
-    this.form.slideUp();
+    this.list.slideUp();
 
     var realName = this.form.find('[name="realName"]');
     var mutantName = this.form.find('[name="mutantName"]');
@@ -217,7 +216,7 @@ var app = {
     });
 
     this.refreshRoster();
-    this.form.slideDown();
+    this.list.slideDown();
   },
 
   loadRoster: function(event) {
